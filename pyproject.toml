@@ -1,0 +1,19 @@
+[project]
+name = "nid"
+version = "0.1.0"
+description = "Django + HTMX + Tailwind + Alpine.js project"
+requires-python = ">=3.11"
+dependencies = [
+    "django>=5.0",
+    "djangorestframework>=3.14",
+    "django-htmx>=1.17",
+    "whitenoise>=6.6",
+    "gunicorn>=21.2",
+    "psycopg2-binary>=2.9",
+    "python-decouple>=3.8",
+    "dj-database-url>=2.1",
+    "pywebpush>=1.14",
+]
+
+[dependency-groups]
+dev = []
