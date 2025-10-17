@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Login - nid{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h1 class="text-3xl font-bold text-center text-gray-900 mb-12">{{ greeting }} c qui ?</h1>
+
+            <form method="post" action="{% url 'accounts:handle_login' %}" class="space-y-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-2 gap-6">
+                    {% for user in users %}
+                    <button
+                        type="submit"
+                        name="name"
+                        value="{{ user.name }}"
+                        class="py-8 px-6 text-white font-bold text-lg rounded-xl transition duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl
+                        {% if forloop.counter == 1 %}bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600{% endif %}
+                        {% if forloop.counter == 2 %}bg-gradient-to-r from-cyan-400 to-lime-400 hover:from-cyan-500 hover:to-lime-500 text-gray-900 font-black{% endif %}
+                        {% if forloop.counter == 3 %}bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600{% endif %}
+                        {% if forloop.counter == 4 %}bg-gradient-to-r from-yellow-300 to-orange-300 hover:from-yellow-400 hover:to-orange-400 text-gray-800 font-black{% endif %}
+                        {% if forloop.counter == 5 %}bg-gradient-to-r from-blue-400 to-purple-500 hover:from-blue-500 hover:to-purple-600{% endif %}
+                        {% if forloop.counter == 6 %}bg-gradient-to-r from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500 text-gray-900 font-black{% endif %}
+                        {% if forloop.counter == 7 %}bg-gradient-to-r from-green-400 to-cyan-500 hover:from-green-500 hover:to-cyan-600{% endif %}
+                        {% if forloop.counter == 8 %}bg-gradient-to-r from-rose-400 to-purple-600 hover:from-rose-500 hover:to-purple-700{% endif %}">
+                        {{ user.get_name_display }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

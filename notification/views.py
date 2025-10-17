@@ -1,19 +1,13 @@
-from django.shortcuts import render
+import json
+from pathlib import Path
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from pywebpush import webpush, WebPushException
 from py_vapid import Vapid01
-import json
-from pathlib import Path
-
-
-def index(request):
-    """Home page for web push notifications"""
-    return render(request, "demo/index.html", {
-        "vapid_public_key": settings.VAPID_PUBLIC_KEY or ""
-    })
+from accounts.decorators import login_required
 
 
 def service_worker(request):
@@ -26,6 +20,7 @@ def service_worker(request):
     return response
 
 
+@login_required
 @require_http_methods(["POST"])
 def send_notification(request):
     """Send a web push notification"""

@@ -15,6 +15,15 @@ RUN uv sync --frozen --no-dev
 # Copy project files
 COPY . .
 
+# Install Node.js for Tailwind
+RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
+
+# Install Tailwind CSS
+RUN npm install -g tailwindcss
+
+# Build Tailwind CSS
+RUN tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify
+
 # Collect static files
 RUN uv run python manage.py collectstatic --noinput
 

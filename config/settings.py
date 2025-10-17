@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_htmx",
-    "demo",
+    "accounts",
+    "notification",
+    "home",
 ]
 
 MIDDLEWARE = [

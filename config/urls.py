@@ -17,10 +17,12 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from demo import views as demo_views
+from notification import views as notification_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("service-worker.js", demo_views.service_worker, name="service_worker"),
-    path("", include("demo.urls")),
+    path("service-worker.js", notification_views.service_worker, name="service_worker"),
+    path("accounts/", include("accounts.urls")),
+    path("notifications/", include("notification.urls")),
+    path("", include("home.urls")),
 ]
