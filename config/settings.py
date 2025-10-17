@@ -59,6 +59,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "config.middleware.PasswordProtectionMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -145,8 +146,45 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Site Password Protection
+SITE_PASSWORD = config("SITE_PASSWORD", default="password")
+
 # Web Push Notifications
 # VAPID keys for web push (generate with: python manage.py generate_vapid_keys)
 VAPID_PUBLIC_KEY = config("VAPID_PUBLIC_KEY", default=None)
 VAPID_PRIVATE_KEY = config("VAPID_PRIVATE_KEY", default=None)
 VAPID_ADMIN_EMAIL = config("VAPID_ADMIN_EMAIL", default="admin@example.com")
+
+# Logging configuration
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}

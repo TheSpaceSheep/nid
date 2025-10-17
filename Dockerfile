@@ -15,20 +15,11 @@ RUN uv sync --frozen --no-dev
 # Copy project files
 COPY . .
 
-# Install Node.js for Tailwind
-RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
-
-# Install Tailwind CSS
-RUN npm install -g tailwindcss
-
-# Build Tailwind CSS
-RUN tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify
-
 # Collect static files
 RUN uv run python manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8000
 
-# Run gunicorn
-CMD ["uv", "run", "gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Run gunicorn with error logging
+CMD ["uv", "run", "gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--log-level", "debug", "--access-logfile", "-", "--error-logfile", "-"]
