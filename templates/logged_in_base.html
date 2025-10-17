@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col px-4 py-12">
+    <!-- Header with logout button -->
+    <div class="flex justify-end mb-8">
+        <a href="{% url 'accounts:logout' %}" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-200">
+            {{ logout_message }}
+        </a>
+    </div>
+
+    <!-- Main content in white div -->
+    <div class="flex items-center justify-center flex-1">
+        <div class="w-full max-w-2xl bg-white rounded-lg shadow-lg p-8">
+            {% block page_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

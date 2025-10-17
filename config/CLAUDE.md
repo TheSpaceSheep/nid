@@ -1,0 +1,3 @@
+- **Database config**: Uses dj-database-url. SQLite default, PostgreSQL via DATABASE_URL env var
+- **Static files**: WhiteNoiseMiddleware is position-sensitive - must be after SecurityMiddleware
+- **HTMX middleware**: django_htmx.middleware.HtmxMiddleware must be last in MIDDLEWARE list

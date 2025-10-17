@@ -8,6 +8,20 @@ from .decorators import login_required
 
 def login(request):
     """Login page with random greeting and user selection buttons"""
+    # Ensure all users exist
+    user_names = [
+        ("noe", "Noé"),
+        ("baz", "Baz"),
+        ("philo", "Philo"),
+        ("maya", "Maya"),
+        ("jules", "Jules"),
+        ("clotilde", "Clotilde"),
+        ("pierre", "Pierre"),
+        ("lorene", "Lorene"),
+    ]
+    for name, _ in user_names:
+        User.objects.get_or_create(name=name)
+
     greeting = random.choice(GREETINGS)
     users = User.objects.all()
     return render(request, 'accounts/login.html', {

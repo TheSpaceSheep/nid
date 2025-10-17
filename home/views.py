@@ -15,7 +15,11 @@ def index(request):
         return redirect('accounts:login')
 
     greeting = random.choice(GREETINGS)
+    logout_messages = ['jme casse', 'ciao', 'je m\'en vais au revoir', 'me demande pas pq chuis parti sans motif']
+    logout_message = random.choice(logout_messages)
+
     return render(request, 'home/index.html', {
         'greeting': greeting,
         'user': user,
+        'logout_message': logout_message,
     })
