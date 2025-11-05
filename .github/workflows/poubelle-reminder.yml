@@ -1,0 +1,36 @@
+name: Poubelle Jaune Reminder
+
+on:
+  schedule:
+    # Monday, Wednesday, Friday at 18:00 Paris time (17:00 UTC in winter, 16:00 UTC in summer)
+    # Using 17:00 UTC as compromise
+    - cron: '0 17 * * 1,3,5'
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  send-reminder:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Poubelle Reminder
+        run: |
+          # Get token from secret (first 32 chars of SECRET_KEY)
+          TOKEN="${{ secrets.NOTIFICATION_TOKEN }}"
+
+          # Send request to Fly.io app
+          response=$(curl -X POST \
+            -w "\nHTTP_STATUS:%{http_code}" \
+            "${{ secrets.APP_URL }}/notification/send-poubelle-reminders/?token=$TOKEN")
+
+          http_status=$(echo "$response" | grep HTTP_STATUS | cut -d: -f2)
+          body=$(echo "$response" | sed '/HTTP_STATUS:/d')
+
+          echo "Response: $body"
+          echo "Status: $http_status"
+
+          if [ "$http_status" -ne 200 ]; then
+            echo "Failed to send notifications"
+            exit 1
+          fi

@@ -3,8 +3,81 @@
 {% block title %}Home - nid{% endblock %}
 
 {% block page_content %}
+{% load static %}
 <h1 class="text-4xl font-bold text-center text-gray-900">{{ greeting }} {{ user.display_name }}</h1>
 <p class="mt-6 text-center text-gray-700 text-lg">
     alors elle est stylée cette appli ou quoi ? bon pour l'instant elle fait rien c'était juste pour voir si j'arrive à l'installer sur vos tels
 </p>
+
+<div class="mt-12 flex justify-center">
+    <button
+        onclick="document.getElementById('poubelle-audio').play()"
+        class="max-w-xs px-6 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-400 hover:from-pink-600 hover:via-purple-600 hover:to-yellow-500 text-white font-bold rounded-2xl shadow-2xl border-4 border-pink-300 transform transition-all hover:scale-110 active:scale-95 text-lg hover:rotate-1 cursor-pointer">
+        Euh j'ai oublié quand c'est qu'il faut sortir la poubelle jaune
+    </button>
+</div>
+
+<audio id="poubelle-audio" preload="auto">
+    <source src="{% static 'audio/rappel_poubelles.mp3' %}" type="audio/mpeg">
+    Votre navigateur ne supporte pas l'audio.
+</audio>
+
+<!-- Poubelle Notification Toggle -->
+<div class="mt-16 border-t pt-8">
+    <div id="poubelle-toggle" class="flex flex-col items-center gap-4">
+        {% if notifications_enabled.poubelle %}
+            <button
+                hx-post="{% url 'notification:disable_poubelle' %}"
+                hx-target="#poubelle-toggle"
+                hx-swap="outerHTML"
+                class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-md transition-all">
+                je veux plus les notifs pour la poubelle jaune c'était trop chiant
+            </button>
+        {% else %}
+            <button
+                onclick="subscribeToPoubelleNotifications()"
+                class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md transition-all">
+                stp envoie des notifications pour la poubelle jaune
+            </button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Minimal JS only for Push API - everything else via HTMX
+async function subscribeToPoubelleNotifications() {
+    try {
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+            alert('Les notifications ne sont pas supportées sur ce navigateur');
+            return;
+        }
+
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            alert('Permission de notification refusée');
+            return;
+        }
+
+        const registration = await navigator.serviceWorker.register('/service-worker.js');
+        await navigator.serviceWorker.ready;
+
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: '{{ vapid_public_key }}'
+        });
+
+        // Send subscription to server via HTMX
+        htmx.ajax('POST', '{% url "notification:enable_poubelle" %}', {
+            target: '#poubelle-toggle',
+            swap: 'outerHTML',
+            values: { subscription: JSON.stringify(subscription.toJSON()) }
+        });
+
+    } catch (error) {
+        alert('Erreur: ' + error.message);
+    }
+}
+</script>
 {% endblock %}
